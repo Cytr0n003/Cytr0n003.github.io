@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Benjamín Peraltilla — Frontend Developer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --bg2: #11111a;
+    --bg3: #1a1a28;
+    --accent: #00e5ff;
+    --accent2: #7c3aed;
+    --text: #e8e8f0;
+    --muted: #888899;
+    --border: rgba(255,255,255,0.07);
+    --card: rgba(255,255,255,0.04);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* NOISE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.4;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 5%;
+    background: rgba(10,10,15,0.85);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    color: var(--accent);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 28px;
+    align-items: center;
+  }
+
+  .nav-links a {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+
+  /* LANG TOGGLE */
+  .lang-btn {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--accent);
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    padding: 6px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .lang-btn:hover {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  /* HERO */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 120px 5% 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 70% 50%, rgba(0,229,255,0.06) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 60% at 20% 80%, rgba(124,58,237,0.08) 0%, transparent 70%);
+  }
+
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
+  }
+
+  .hero-content {
+    position: relative;
+    max-width: 900px;
+  }
+
+  .hero-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .hero-tag::before {
+    content: '';
+    width: 30px; height: 1px;
+    background: var(--accent);
+  }
+
+  h1.name {
+    font-size: clamp(2.8rem, 6vw, 5.5rem);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+  }
+  h1.name span { color: var(--accent); }
+
+  .hero-role {
+    font-size: clamp(1rem, 2vw, 1.3rem);
+    color: var(--muted);
+    font-weight: 300;
+    margin-bottom: 28px;
+    font-family: 'Space Mono', monospace;
+  }
+
+  .hero-desc {
+    font-size: 1rem;
+    color: rgba(232,232,240,0.75);
+    max-width: 560px;
+    margin-bottom: 40px;
+    line-height: 1.8;
+  }
+
+  .hero-btns {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: var(--bg);
+    padding: 12px 28px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,229,255,0.3); }
+
+  .btn-ghost {
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 12px 28px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* SECTIONS COMMON */
+  section { padding: 80px 5%; }
+
+  .section-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-label::before {
+    content: '';
+    width: 30px; height: 1px;
+    background: var(--accent);
+  }
+
+  h2.section-title {
+    font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 48px;
+  }
+
+  /* ABOUT */
+  #about {
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: start;
+  }
+
+  .about-text p {
+    color: rgba(232,232,240,0.75);
+    margin-bottom: 16px;
+    line-height: 1.8;
+  }
+
+  .contact-list {
+    margin-top: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .contact-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .contact-item .icon {
+    width: 32px; height: 32px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  .contact-item a { color: var(--accent); text-decoration: none; }
+  .contact-item a:hover { text-decoration: underline; }
+
+  .about-right {}
+
+  .skills-group { margin-bottom: 28px; }
+  .skills-group-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .tag {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 5px 14px;
+    border-radius: 100px;
+    font-size: 12px;
+    color: var(--text);
+    transition: all 0.2s;
+  }
+  .tag:hover { border-color: var(--accent); color: var(--accent); }
+  .tag.accent { border-color: rgba(0,229,255,0.3); color: var(--accent); }
+  .tag.purple { border-color: rgba(124,58,237,0.4); color: #a78bfa; }
+
+  /* FLISOL PHOTO */
+  .flisol-section {
+    margin-top: 32px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    position: relative;
+  }
+  .flisol-section img {
+    width: 100%;
+    display: block;
+    filter: saturate(0.7) brightness(0.85);
+    transition: filter 0.4s;
+  }
+  .flisol-section:hover img { filter: saturate(1) brightness(1); }
+  .flisol-caption {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    padding: 14px 18px;
+    background: linear-gradient(transparent, rgba(0,0,0,0.8));
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.12em;
+  }
+
+  /* EXPERIENCE */
+  #experience { background: var(--bg); }
+
+  .timeline {
+    position: relative;
+    padding-left: 30px;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 8px; bottom: 8px;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--accent), var(--accent2), transparent);
+  }
+
+  .timeline-item {
+    position: relative;
+    margin-bottom: 40px;
+    padding: 24px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    transition: border-color 0.3s;
+  }
+  .timeline-item:hover { border-color: rgba(0,229,255,0.2); }
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -36px; top: 28px;
+    width: 10px; height: 10px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--accent);
+  }
+
+  .timeline-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .timeline-role {
+    font-weight: 700;
+    font-size: 16px;
+  }
+  .timeline-date {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    background: rgba(0,229,255,0.07);
+    padding: 4px 10px;
+    border-radius: 4px;
+    border: 1px solid rgba(0,229,255,0.2);
+  }
+  .timeline-org {
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 10px;
+  }
+  .timeline-desc {
+    color: rgba(232,232,240,0.65);
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  /* EDUCATION */
+  #education {
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .edu-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 32px;
+    transition: border-color 0.3s;
+    max-width: 700px;
+  }
+  .edu-card:hover { border-color: rgba(0,229,255,0.25); }
+
+  .edu-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .edu-uni {
+    font-weight: 700;
+    font-size: 18px;
+  }
+  .edu-badge {
+    background: rgba(124,58,237,0.15);
+    border: 1px solid rgba(124,58,237,0.3);
+    color: #a78bfa;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    padding: 5px 12px;
+    border-radius: 4px;
+  }
+  .edu-career {
+    color: var(--accent);
+    font-size: 14px;
+    margin-bottom: 16px;
+  }
+
+  .courses-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .courses-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .course-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: rgba(232,232,240,0.75);
+  }
+  .course-item::before {
+    content: '›';
+    color: var(--accent);
+    font-size: 16px;
+    line-height: 1;
+  }
+
+  /* SOFT SKILLS */
+  #skills-soft { background: var(--bg); }
+
+  .soft-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+  }
+  .soft-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: all 0.3s;
+  }
+  .soft-card:hover {
+    border-color: rgba(0,229,255,0.2);
+    transform: translateY(-2px);
+  }
+  .soft-icon {
+    width: 36px; height: 36px;
+    background: rgba(0,229,255,0.07);
+    border: 1px solid rgba(0,229,255,0.15);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .soft-name { font-size: 14px; font-weight: 500; }
+
+  /* FOOTER */
+  footer {
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    padding: 40px 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  .footer-left {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .footer-links {
+    display: flex;
+    gap: 20px;
+  }
+  .footer-links a {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .footer-links a:hover { color: var(--accent); }
+
+  /* FADE IN ANIMATION */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .fade-in.visible { opacity: 1; transform: none; }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .about-grid { grid-template-columns: 1fr; gap: 40px; }
+    .courses-grid { grid-template-columns: 1fr; }
+    .nav-links { gap: 16px; }
+    h1.name { font-size: 2.4rem; }
+    nav { padding: 14px 4%; }
+  }
+  @media (max-width: 480px) {
+    .nav-links a { display: none; }
+    section { padding: 60px 4%; }
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--accent2); border-radius: 3px; }
+
+  /* CURSOR DOT */
+  .cursor-dot {
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 10000;
+    transform: translate(-50%, -50%);
+    transition: opacity 0.2s;
+    mix-blend-mode: screen;
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor-dot" id="cursorDot"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">BP / Portfolio</div>
+  <div class="nav-links">
+    <a href="#about" data-en="About" data-es="Acerca de">Acerca de</a>
+    <a href="#experience" data-en="Experience" data-es="Experiencia">Experiencia</a>
+    <a href="#education" data-en="Education" data-es="Educación">Educación</a>
+    <a href="#skills-soft" data-en="Skills" data-es="Habilidades">Habilidades</a>
+    <button class="lang-btn" id="langToggle" onclick="toggleLang()">EN</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-tag" data-en="Frontend Developer · UPC" data-es="Desarrollador Frontend · UPC">Desarrollador Frontend · UPC</div>
+    <h1 class="name">Benjamín Andreas<br><span>Peraltilla Herrera</span></h1>
+    <div class="hero-role">&lt; Systems Engineering Student /&gt;</div>
+    <p class="hero-desc" data-en="Systems Engineering student at UPC (6th semester), focused on Frontend development and Human-Computer Interaction. I build user-centered interfaces and leverage AI tools to create impactful digital experiences." data-es="Estudiante de Ingeniería de Sistemas en la UPC (6to ciclo), enfocado en desarrollo Frontend e Interacción Humano-Computadora. Construyo interfaces centradas en el usuario y utilizo herramientas de IA para crear experiencias digitales de impacto.">
+      Estudiante de Ingeniería de Sistemas en la UPC (6to ciclo), enfocado en desarrollo Frontend e Interacción Humano-Computadora. Construyo interfaces centradas en el usuario y utilizo herramientas de IA para crear experiencias digitales de impacto.
+    </p>
+    <div class="hero-btns">
+      <a href="mailto:benjaminperaltillaherrera@gmail.com" class="btn-primary">
+        <span>✉</span> <span data-en="Contact me" data-es="Contáctame">Contáctame</span>
+      </a>
+      <a href="https://github.com/Cytr0n003" target="_blank" class="btn-ghost">
+        <span>⌥</span> GitHub
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-label" data-en="01 / About" data-es="01 / Acerca de">01 / Acerca de</div>
+  <h2 class="section-title" data-en="Who I am" data-es="Quién soy">Quién soy</h2>
+
+  <div class="about-grid">
+    <div class="about-text fade-in">
+      <p data-en="I am a Systems Engineering student at UPC with a strong focus on Frontend development and UX/UI design. My passion for Human-Computer Interaction drives me to design interfaces that are not only functional but genuinely intuitive." data-es="Soy estudiante de Ingeniería de Sistemas en la UPC con un fuerte enfoque en el desarrollo Frontend y el diseño UX/UI. Mi pasión por la Interacción Humano-Computadora me impulsa a diseñar interfaces que no solo son funcionales sino genuinamente intuitivas.">
+        Soy estudiante de Ingeniería de Sistemas en la UPC con un fuerte enfoque en el desarrollo Frontend y el diseño UX/UI. Mi pasión por la Interacción Humano-Computadora me impulsa a diseñar interfaces que no solo son funcionales sino genuinamente intuitivas.
+      </p>
+      <p data-en="I use AI tools like Gemini to enhance my workflow in creating presentations and graphic resources. I am continuously learning new technologies like React and Rust, and I enjoy contributing to open-source communities like FLISOL." data-es="Utilizo herramientas de IA como Gemini para potenciar mi flujo de trabajo en la creación de presentaciones y recursos gráficos. Estoy aprendiendo continuamente nuevas tecnologías como React y Rust, y disfruto contribuir a comunidades open-source como FLISOL.">
+        Utilizo herramientas de IA como Gemini para potenciar mi flujo de trabajo en la creación de presentaciones y recursos gráficos. Estoy aprendiendo continuamente nuevas tecnologías como React y Rust, y disfruto contribuir a comunidades open-source como FLISOL.
+      </p>
+      <p data-en="Outside of technology, I am part of Scouts del Perú, where I develop leadership skills and community service. I also enjoy cycling, swimming, and constantly challenging my personal limits." data-es="Fuera de la tecnología, soy parte de los Scouts del Perú, donde desarrollo habilidades de liderazgo y servicio comunitario. También disfruto del ciclismo, la natación y constantemente retarme a superar mis límites personales.">
+        Fuera de la tecnología, soy parte de los Scouts del Perú, donde desarrollo habilidades de liderazgo y servicio comunitario. También disfruto del ciclismo, la natación y constantemente retarme a superar mis límites personales.
+      </p>
+
+      <div class="contact-list">
+        <div class="contact-item">
+          <div class="icon">📱</div>
+          <span>983 741 355</span>
+        </div>
+        <div class="contact-item">
+          <div class="icon">✉️</div>
+          <a href="mailto:benjaminperaltillaherrera@gmail.com">benjaminperaltillaherrera@gmail.com</a>
+        </div>
+        <div class="contact-item">
+          <div class="icon">📍</div>
+          <span data-en="Breña, Lima — Peru" data-es="Breña, Lima — Perú">Breña, Lima — Perú</span>
+        </div>
+        <div class="contact-item">
+          <div class="icon">⌥</div>
+          <a href="https://github.com/Cytr0n003" target="_blank">github.com/Cytr0n003</a>
+        </div>
+        <div class="contact-item">
+          <div class="icon">🌐</div>
+          <span data-en="English — Intermediate" data-es="Inglés — Nivel Intermedio">Inglés — Nivel Intermedio</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="about-right fade-in">
+      <div class="skills-group">
+        <div class="skills-group-title" data-en="Frontend & Design" data-es="Frontend & Diseño">Frontend & Diseño</div>
+        <div class="tags">
+          <span class="tag accent">HTML5</span>
+          <span class="tag accent">CSS3</span>
+          <span class="tag accent">React <small data-en="(learning)" data-es="(aprendiendo)">(aprendiendo)</small></span>
+          <span class="tag accent">IHC / UX</span>
+          <span class="tag accent">Arquitectura Web</span>
+        </div>
+      </div>
+      <div class="skills-group">
+        <div class="skills-group-title" data-en="AI & Productivity" data-es="IA & Productividad">IA & Productividad</div>
+        <div class="tags">
+          <span class="tag purple">Gemini Prompting</span>
+          <span class="tag purple" data-en="PPT / Mockup Design" data-es="Diseño de PPT / Mockups">Diseño de PPT / Mockups</span>
+          <span class="tag purple">Canva / Figma</span>
+        </div>
+      </div>
+      <div class="skills-group">
+        <div class="skills-group-title" data-en="Dev & Tools" data-es="Dev & Herramientas">Dev & Herramientas</div>
+        <div class="tags">
+          <span class="tag">C# (.NET)</span>
+          <span class="tag">Git / GitHub</span>
+          <span class="tag">Rust <small data-en="(learning)" data-es="(aprendiendo)">(aprendiendo)</small></span>
+          <span class="tag">Linux (Kubuntu)</span>
+          <span class="tag">VS Code</span>
+        </div>
+      </div>
+
+      <div class="flisol-section">
+        <img src="flisol.jpg" alt="FLISOL UTEC 2025 — Networking event" onerror="this.parentElement.style.display='none'">
+        <div class="flisol-caption">FLISOL UTEC 2025 — Festival Latinoamericano de Instalación de Software Libre</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="section-label" data-en="02 / Experience" data-es="02 / Experiencia">02 / Experiencia</div>
+  <h2 class="section-title" data-en="Events & Work" data-es="Eventos y Trabajo">Eventos y Trabajo</h2>
+
+  <div class="timeline">
+    <div class="timeline-item fade-in">
+      <div class="timeline-meta">
+        <div class="timeline-role" data-en="FLISOL UTEC — Active Participant" data-es="FLISOL UTEC — Participante Activo">FLISOL UTEC — Participante Activo</div>
+        <div class="timeline-date">2025</div>
+      </div>
+      <div class="timeline-org" data-en="Festival Latinoamericano de Instalación de Software Libre" data-es="Festival Latinoamericano de Instalación de Software Libre">Festival Latinoamericano de Instalación de Software Libre</div>
+      <div class="timeline-desc" data-en="Participation in the FLISOL event organized at UTEC, promoting the use of free and open-source software. Networking with the tech community, exploration of Linux environments, and engagement in talks about emerging technologies." data-es="Participación en el evento FLISOL organizado en la UTEC, promoviendo el uso de software libre y de código abierto. Networking con la comunidad tecnológica, exploración de entornos Linux y participación en charlas sobre tecnologías emergentes.">
+        Participación en el evento FLISOL organizado en la UTEC, promoviendo el uso de software libre y de código abierto. Networking con la comunidad tecnológica, exploración de entornos Linux y participación en charlas sobre tecnologías emergentes.
+      </div>
+    </div>
+
+    <div class="timeline-item fade-in">
+      <div class="timeline-meta">
+        <div class="timeline-role" data-en="Production Operator" data-es="Operario de Producción">Operario de Producción</div>
+        <div class="timeline-date">2024</div>
+      </div>
+      <div class="timeline-org">Clorox Perú S.A.</div>
+      <div class="timeline-desc" data-en="Work on the production line ensuring correct packaging, labeling, and shipping of products. This experience strengthened my discipline, ability to work under pressure, and attention to detail in standardized processes." data-es="Trabajo en la línea de producción asegurando el correcto envasado, etiquetado y embalaje de productos. Esta experiencia fortaleció mi disciplina, capacidad de trabajo bajo presión y atención al detalle en procesos estandarizados.">
+        Trabajo en la línea de producción asegurando el correcto envasado, etiquetado y embalaje de productos. Esta experiencia fortaleció mi disciplina, capacidad de trabajo bajo presión y atención al detalle en procesos estandarizados.
+      </div>
+    </div>
+
+    <div class="timeline-item fade-in">
+      <div class="timeline-meta">
+        <div class="timeline-role" data-en="Active Member — Scouts del Perú" data-es="Miembro Activo — Scouts del Perú">Miembro Activo — Scouts del Perú</div>
+        <div class="timeline-date" data-en="Ongoing" data-es="Continuo">Continuo</div>
+      </div>
+      <div class="timeline-org" data-en="Scouts del Perú — Community service and leadership" data-es="Scouts del Perú — Servicio comunitario y liderazgo">Scouts del Perú — Servicio comunitario y liderazgo</div>
+      <div class="timeline-desc" data-en="Continuous development of leadership, teamwork, and community service skills through planning and executing outdoor and social impact activities." data-es="Desarrollo continuo de habilidades de liderazgo, trabajo en equipo y servicio a la comunidad mediante la planificación y ejecución de actividades al aire libre y de impacto social.">
+        Desarrollo continuo de habilidades de liderazgo, trabajo en equipo y servicio a la comunidad mediante la planificación y ejecución de actividades al aire libre y de impacto social.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section id="education">
+  <div class="section-label" data-en="03 / Education" data-es="03 / Educación">03 / Educación</div>
+  <h2 class="section-title" data-en="Academic Background" data-es="Formación Académica">Formación Académica</h2>
+
+  <div class="edu-card fade-in">
+    <div class="edu-header">
+      <div class="edu-uni" data-en="Universidad Peruana de Ciencias Aplicadas" data-es="Universidad Peruana de Ciencias Aplicadas">Universidad Peruana de Ciencias Aplicadas</div>
+      <div class="edu-badge" data-en="6th Semester" data-es="6to Ciclo">6to Ciclo</div>
+    </div>
+    <div class="edu-career" data-en="Systems Engineering — Focus: Frontend & IHC" data-es="Ingeniería de Sistemas de Información — Enfoque: Frontend & IHC">Ingeniería de Sistemas de Información — Enfoque: Frontend & IHC</div>
+
+    <div class="courses-title" data-en="Key Courses" data-es="Cursos Clave">Cursos Clave</div>
+    <div class="courses-grid">
+      <div class="course-item" data-en="Human-Computer Interaction (IHC)" data-es="Interacción Humano-Computadora (IHC)">Interacción Humano-Computadora (IHC)</div>
+      <div class="course-item" data-en="Web Design Architecture" data-es="Arquitectura de Diseños Web">Arquitectura de Diseños Web</div>
+      <div class="course-item" data-en="Fundamentals of Information Systems" data-es="Fundamentos de Sistemas de Información">Fundamentos de Sistemas de Información</div>
+      <div class="course-item" data-en="Object-Oriented Programming (C#)" data-es="Programación Orientada a Objetos (C#)">Programación Orientada a Objetos (C#)</div>
+    </div>
+  </div>
+</section>
+
+<!-- SOFT SKILLS -->
+<section id="skills-soft">
+  <div class="section-label" data-en="04 / Skills" data-es="04 / Habilidades">04 / Habilidades</div>
+  <h2 class="section-title" data-en="Soft Skills" data-es="Habilidades Blandas">Habilidades Blandas</h2>
+
+  <div class="soft-grid">
+    <div class="soft-card fade-in">
+      <div class="soft-icon">🗣</div>
+      <div class="soft-name" data-en="Assertive Communication" data-es="Comunicación Asertiva">Comunicación Asertiva</div>
+    </div>
+    <div class="soft-card fade-in">
+      <div class="soft-icon">🧩</div>
+      <div class="soft-name" data-en="Problem Solving" data-es="Resolución de Problemas">Resolución de Problemas</div>
+    </div>
+    <div class="soft-card fade-in">
+      <div class="soft-icon">🤝</div>
+      <div class="soft-name" data-en="Teamwork" data-es="Trabajo en Equipo">Trabajo en Equipo</div>
+    </div>
+    <div class="soft-card fade-in">
+      <div class="soft-icon">🏆</div>
+      <div class="soft-name" data-en="Leadership" data-es="Liderazgo">Liderazgo</div>
+    </div>
+    <div class="soft-card fade-in">
+      <div class="soft-icon">💡</div>
+      <div class="soft-name" data-en="Optimistic" data-es="Optimista">Optimista</div>
+    </div>
+    <div class="soft-card fade-in">
+      <div class="soft-icon">🔄</div>
+      <div class="soft-name" data-en="Resilience" data-es="Resiliencia">Resiliencia</div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    <div>© 2025 Benjamín Peraltilla Herrera</div>
+    <div style="margin-top:4px;font-size:10px;">Built with HTML · CSS · JavaScript</div>
+  </div>
+  <div class="footer-links">
+    <a href="mailto:benjaminperaltillaherrera@gmail.com">Email</a>
+    <a href="https://github.com/Cytr0n003" target="_blank">GitHub</a>
+    <a href="#hero" data-en="Back to top" data-es="Subir">Subir ↑</a>
+  </div>
+</footer>
+
+<script>
+  // =========== DISABLE RIGHT CLICK & DEVTOOLS ===========
+  document.addEventListener('contextmenu', e => e.preventDefault());
+  document.addEventListener('keydown', e => {
+    if (
+      e.key === 'F12' ||
+      (e.ctrlKey && e.shiftKey && ['I','J','C','U'].includes(e.key.toUpperCase())) ||
+      (e.ctrlKey && e.key === 'u')
+    ) {
+      e.preventDefault();
+    }
+  });
+
+  // Devtools detection (basic)
+  setInterval(() => {
+    const threshold = 160;
+    if (window.outerWidth - window.innerWidth > threshold || window.outerHeight - window.innerHeight > threshold) {
+      document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:monospace;color:#00e5ff;background:#0a0a0f;font-size:20px;">🔒 Acceso no autorizado</div>';
+    }
+  }, 1000);
+
+  // =========== LANGUAGE TOGGLE ===========
+  let currentLang = 'es';
+
+  function toggleLang() {
+    currentLang = currentLang === 'es' ? 'en' : 'es';
+    const btn = document.getElementById('langToggle');
+    btn.textContent = currentLang === 'es' ? 'EN' : 'ES';
+    applyLang(currentLang);
+  }
+
+  function applyLang(lang) {
+    document.querySelectorAll('[data-es]').forEach(el => {
+      const text = el.getAttribute('data-' + lang);
+      if (text) el.textContent = text;
+    });
+    document.documentElement.lang = lang;
+  }
+
+  // =========== CURSOR DOT ===========
+  const dot = document.getElementById('cursorDot');
+  document.addEventListener('mousemove', e => {
+    dot.style.left = e.clientX + 'px';
+    dot.style.top = e.clientY + 'px';
+  });
+
+  // =========== FADE IN ON SCROLL ===========
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
